@@ -19,6 +19,7 @@ public class TemperatureGUI implements ChangeListener {
   private Vector<TemperatureGUIListener> listenerList;
   
   public TemperatureGUI() {
+	System.out.println("Created");
     listenerList=new Vector<TemperatureGUIListener>();
     frame=new JFrame("Temperature GUI");
     panel=new JPanel();
@@ -57,7 +58,10 @@ public class TemperatureGUI implements ChangeListener {
   }
   
   public static void main(String args[]) {
-    new TemperatureGUI();
+	System.out.println("Program started");
+    new TemperatureGUI();		// Interact through GUI, does not need reference
+    
+    
   }
   
-}
+} 

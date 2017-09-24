@@ -11,8 +11,9 @@ public class TestPiSlave {
   
   public static void main(String[] args) throws Exception {
     
-    // create an rpc server listening on port 8080
-    RpcServer server = new RpcServerImpl(8080).start();
+    int server_port = Integer.parseInt(args[0]);
+	RpcServer server = new RpcServerImpl(server_port).start();
+    System.out.println("RPC server started on port: "+server_port);
 
     // add a call listener that will get called when a client does an RPC call to the server
     server.setCallListener(new CallListener() {
@@ -21,7 +22,9 @@ public class TestPiSlave {
         if (function.equals(PIFUNCTION)) {
           if ((fargs!=null) && (fargs.length>0)) {
             long rounds=Long.valueOf(fargs[0]).longValue();
+            System.out.println("PIFUNCTION called with "+rounds+" rounds");
             long score=PiCalculator.picalc(rounds);
+            System.out.println("Returning score of: "+score);
             return new String[]{Long.toString(score)};
           }
         }

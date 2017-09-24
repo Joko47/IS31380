@@ -18,9 +18,11 @@ public class TestPiAsyncMaster {
       System.exit(1);
     }
     slave_finished=false;
-    long rounds=Long.valueOf(args[0]).longValue()/2;
+    int n=3;
+    long rounds=Long.valueOf(args[0]).longValue()/n;
     
-    RpcClient client = new RpcClientImpl("http://10.16.166.176:8080");
+    RpcClient client1 = new RpcClientImpl("http://localhost:8080");
+    RpcClient client2 = new RpcClientImpl("http://localhost:8082");
     
     // create a callback listener for use with the call
     CallbackListener asyncListener = new CallbackListener() {
@@ -43,11 +45,18 @@ public class TestPiAsyncMaster {
           e.printStackTrace();
         }
     };
-
-    System.out.println("Asking slave to calculate "+rounds+" rounds.");
+    
     starttime=System.currentTimeMillis();
-    client.callAsync(TestPiSlave.PIFUNCTION,
-                     new String[]{Long.toString(rounds)}, 1L, asyncListener);
+
+    int client1load=80;
+    int client2load=40;
+    System.out.println("Asking slave1 to calculate "+(rounds*client1load)/100+" rounds.");
+    client1.callAsync(TestPiSlave.PIFUNCTION,
+                     new String[]{Long.toString((rounds*client1load)/100)}, 1L, asyncListener);
+    
+    System.out.println("Asking slave2 to calculate "+(rounds*client2load)/100+" rounds.");
+    client2.callAsync(TestPiSlave.PIFUNCTION,
+                     new String[]{Long.toString((rounds*client2load)/100)}, 1L, asyncListener);
     
     System.out.println("Asking master (myself) to calculate "+rounds+" rounds.");
     long starttime2=System.currentTimeMillis();

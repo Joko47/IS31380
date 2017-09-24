@@ -2,7 +2,7 @@ package dtu.is31380;
 
 import java.util.ArrayList;
 
-public class TestHouseController extends AbstractHouseController {
+public class TestHouseController extends AbstractHouseController implements TemperatureGUIListener {
 
   public TestHouseController() {
     super(5000); //set timestep to 5000ms
@@ -16,8 +16,7 @@ public class TestHouseController extends AbstractHouseController {
         intf.setActuator("a_htrr1_1", 1.0); //switch heater in room 1 on
       }
     }
-    System.out.println("T_room1="+intf.getSensorValue("s_tempr1"));
-    
+    System.out.println("T_room1="+intf.getSensorValue("s_tempr1"));    
   }
 
   @Override
@@ -26,8 +25,14 @@ public class TestHouseController extends AbstractHouseController {
     ArrayList<RoomConfig> rooms=bc.getRooms();
     System.out.println("Rooms: "+rooms.toString());
     getInterface().setActuator("a_htrr1_1", 0.0);
+    TemperatureGUI t=new TemperatureGUI();
+    t.addListener(this);
+  }
+
+  @Override
+  public void setpointChanged(double setpoint) {
+	System.out.println("Setpoint is: " + setpoint);
   }
   
   
-
 }

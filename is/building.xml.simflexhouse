@@ -13,7 +13,7 @@
   <!-- HARDWARE INTERFACES -->
 
   <hwinterface name="SimTPDW" type="SimThermalPowerDoorsWindows" config="SimTPDWInterfaceConfig"
-               datasource="file" tsfile="all.csv" loop="false"/>
+               datasource="file" tsfile="all-doors.csv" loop="false"/>
   
   <sensor name="s_Grid_Psum" type="Electrical" pos="0,0" active="1">
     <interface name="SimTPDW" channel="Psum"/>
