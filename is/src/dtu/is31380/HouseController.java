@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class HouseController extends AbstractHouseController implements TemperatureGUIListener{
 
 	double setPoint = 20.0;
-	double delta = 2.0;
+	double delta = 0.0;
 	
   public HouseController() {
     super(5000); //set timestep to 5000ms

@@ -12,7 +12,7 @@ public class TestPiSlave2 {
   public static void main(String[] args) throws Exception {
     
     // create an rpc server listening on port 8081
-	int server_port = 8081;
+	int server_port = 8080;
     RpcServer server = new RpcServerImpl(server_port).start();
     System.out.println("RPC server started on port: "+server_port);
 
