@@ -1,3 +1,4 @@
 activeuserprofiles=IS31380;Team
 eclipse.preferences.version=1
 org.eclipse.rse.systemtype.local.systemType.defaultUserId=student
+useridperkey=IS31380.Local\=student;

@@ -101,8 +101,8 @@ public class RoomConfig extends AbstractSpaceConfig implements Serializable {
         String polystr=_poly.getNodeValue();
         String[] polypairs=polystr.split(" ");
         for (String pair:polypairs) {
-          if (!pair.matches(POLYPAIR_REGEX)) {
-            String[] x12=pair.split(POLYPAIR_REGEX);
+          if (pair.matches(POLYPAIR_REGEX)) {
+            String[] x12=pair.split(",");
             polyX.add(Double.valueOf(x12[0]).doubleValue());
             polyY.add(Double.valueOf(x12[1]).doubleValue());
           }
