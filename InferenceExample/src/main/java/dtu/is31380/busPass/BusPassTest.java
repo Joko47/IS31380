@@ -2,6 +2,7 @@ package dtu.is31380.busPass;
 
 import java.util.Collection;
 
+import org.drools.core.base.RuleNameStartsWithAgendaFilter;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -26,7 +27,7 @@ public class BusPassTest {
             FactHandle bj = kSession.insert(new Person("Bjoern",15,"London"));
             kSession.insert(new Person("Anna",31,"London"));
 
-            kSession.fireAllRules();
+            //kSession.fireAllRules();
             
             Collection<FactHandle> facts = kSession.getFactHandles();
             int i =0;
@@ -40,7 +41,11 @@ public class BusPassTest {
             kSession.update(bj, new Person("Bjarke",40,"Manchester"));
             
             // and fire it again
-            kSession.fireAllRules();
+            //kSession.fireAllRules();
+            kSession.fireAllRules(new RuleNameStartsWithAgendaFilter("Infer"));
+            kSession.fireAllRules(new RuleNameStartsWithAgendaFilter("Issue "));
+            kSession.fireAllRules(new RuleNameStartsWithAgendaFilter("Return "));
+            
                         
         } catch (Throwable t) {
             t.printStackTrace();

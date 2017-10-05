@@ -3,11 +3,11 @@
     <kbase name="rules" packages="rules">
         <ksession name="ksession-rules"/>
     </kbase>
-    <kbase name="rules-Flex" packages="rulesFlex">
-        <ksession name="ksession-rulesFlex"/>
+    <kbase name="rules-Flex" packages="statefulRules">
+        <ksession name="ksession-statefulRules"/>
     </kbase>
-    <kbase name="FlexRules" packages="FlexRules">
-        <ksession name="ksession-FlexRules" type="stateless" />
+    <kbase name="FlexRules" packages="rulesFlex">
+        <ksession name="ksession-rulesFlex" type="stateless" />
     </kbase>
     <kbase name="dtables" packages="dtables">
         <ksession name="ksession-dtables"/>
