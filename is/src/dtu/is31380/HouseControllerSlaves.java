@@ -2,9 +2,7 @@ package dtu.is31380;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.BlockingQueue;
 
-import com.journaldev.concurrency.Message;
 
 public class HouseControllerSlaves extends AbstractHouseController {
 
