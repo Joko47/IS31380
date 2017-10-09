@@ -6,7 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 
 @RunWith(Suite.class)
-@SuiteClasses({ commexercise.TestPiSyncMasterTest.class,dtu.is31380.LeibnizTest.class})
+@SuiteClasses({ commexercise.TestPiSyncMasterTest.class,Tests.LeibnizTest.class})
 public class AllTests {
 
 }

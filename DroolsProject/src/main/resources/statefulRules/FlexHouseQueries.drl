@@ -47,14 +47,16 @@ rule "turn-on"
     when
         //conditions
        b : BuildingConfig()
-       s : Sensor(type == DeviceType.Temperature, value < 21)
+       t : SetPoint(name == s.name) 
+       //s : Sensor(type == DeviceType.Temperature, value < 21)
+       s : Sensor(type == DeviceType.Temperature, value < t.temp)       
        $rs : RoomConfig() from b.getRoomForSensor(s.getName())
-       a : Actuator( type == DeviceType.PowerControlledHeater) 
+       a : Actuator( type == DeviceType.PowerControlledHeater, value != 1.0) 
        ra : RoomConfig( name == $rs.name) from b.getRoomForActuator(a.getName())
        intf : HouseControllerInterface()
     then
         //actions
-    	System.out.println(intf.getSimulationTime().toString()+ " : Turning on  "+a.getName()+" as "+s.getName()+" in room "+ra.getRoomName()+" is below 21 degrees");       
+    	System.out.println(intf.getSimulationTime().toString()+ " : Turning on  "+a.getName()+" as "+s.getName()+" in room "+ra.getRoomName()+" is below " +t.getTemp()+" degrees");       
 		intf.setActuator(a.getName(),1.0);
 end
 
@@ -63,18 +65,29 @@ rule "turn-off"
     when
         //conditions
        b : BuildingConfig()
-       s : Sensor(type == DeviceType.Temperature, value > 22)
+       s : Sensor(type == DeviceType.Temperature, value > t.temp)
+       t : SetPoint(name == s.name) 
+       //s : Sensor(type == DeviceType.Temperature, value > 22)
+       	    
        $rs : RoomConfig() from b.getRoomForSensor(s.getName())
-       a : Actuator( type == DeviceType.PowerControlledHeater) 
+       a : Actuator( type == DeviceType.PowerControlledHeater, value != 0.0) 
        ra : RoomConfig( name == $rs.name) from b.getRoomForActuator(a.getName())
        intf : HouseControllerInterface()
     then
         //actions
-    	 System.out.println(intf.getSimulationTime().toString()+ " : Turning off  "+a.getName()+" as "+s.getName()+" in room "+ra.getRoomName()+" is above 22 degrees");       
+    	 System.out.println(intf.getSimulationTime().toString()+ " : Turning off  "+a.getName()+" as "+s.getName()+" in room "+ra.getRoomName()+" is above "+t.getTemp()+" degrees");       
 		intf.setActuator(a.getName(),0.0);
 end
 
+rule "test"	
+	when
+		s : SetPoint()
+	then
+		System.out.println(s.getName());
+		System.out.println(s.getTemp());
+end
 
+/*
 rule "check-floor-area2"
 when
 	b : BuildingConfig()
@@ -85,8 +98,8 @@ when
 then
  	System.out.println(rname+" InnerWallArea: " +  ra.getFloorArea());      
 end	
-
-
+*/
+/*
 rule "check-air-area2"
     when
        	b : BuildingConfig()
@@ -98,7 +111,7 @@ rule "check-air-area2"
         System.out.println(rname+" AirVolume: " +  (ra.getFloorArea()*(ra.getRoomHeight())));
 
 end
-
+*/
 
 /*
 rule "Your Second Rule"

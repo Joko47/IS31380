@@ -7,9 +7,9 @@ public class HouseController extends AbstractHouseController implements Temperat
 	double setPoint = 20.0;
 	double delta = 0.0;
 	
-  public HouseController() {
-    super(5000); //set timestep to 5000ms
-  }
+	public HouseController() {
+	    super(5000); //set timestep to 5000ms
+	  }
   
   @Override
   protected void execute() {
@@ -51,6 +51,7 @@ public class HouseController extends AbstractHouseController implements Temperat
 	    System.out.println("Rooms: "+rooms.toString());
 	    TemperatureGUI t=new TemperatureGUI();
 	    t.addListener(this);
+	    
   }
 
   
@@ -59,7 +60,7 @@ public class HouseController extends AbstractHouseController implements Temperat
 	  System.out.println("Setpoint changed from: "+setPoint+ " to: " + setpoint);
 	  this.setPoint = setpoint;
 	  
-  }
+  } 
   
 
 }

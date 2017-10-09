@@ -1,7 +1,8 @@
 /META-INF/
 /com/
 /dtables/
+/dtu/
+/logback-test.xml
 /rules/
-/FlexRules/
-/statefulRules/
 /rulesFlex/
+/statefulRules/

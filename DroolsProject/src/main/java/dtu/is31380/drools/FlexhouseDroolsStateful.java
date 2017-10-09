@@ -20,6 +20,7 @@ import dtu.is31380.HouseControllerInterface;
 import dtu.is31380.RoomConfig;
 import dtu.is31380.Sensor;
 
+
 /**
  * This class is to launch a rule set.
  */
@@ -64,6 +65,7 @@ public class FlexhouseDroolsStateful extends AbstractHouseController {
         	kSession.fireAllRules();
         	// or just a subset filtered by rule name
     	    //kSession.fireAllRules(new RuleNameStartsWithAgendaFilter("turn"));
+    	    //kSession.fireAllRules(new RuleNameStartsWithAgendaFilter("test"));
     	    //kSession.fireAllRules(new RuleNameEndsWithAgendaFilter("on"));
         	//kSession.fireAllRules(new RuleNameEndsWithAgendaFilter("check"));
      	   
@@ -98,6 +100,9 @@ public class FlexhouseDroolsStateful extends AbstractHouseController {
  	    objList.add(rooms);
   
  	    facts = new ArrayList<FactHandle>();
+ 	    
+ 	    kSession.insert(new SetPoint("s_tempr1",11.0));
+ 	    kSession.insert(new SetPoint("s_tempr2",40.0));
 	    
  	    // iterate through list of objects and Insert to Drools engine.
  	    for (Object jobj : objList) {
@@ -107,7 +112,7 @@ public class FlexhouseDroolsStateful extends AbstractHouseController {
  	            t.printStackTrace();
  	    }
  	    // only fire rules whose name starts with ...
-	    kSession.fireAllRules(new RuleNameStartsWithAgendaFilter("check"));
+	    //kSession.fireAllRules(new RuleNameStartsWithAgendaFilter("check"));
         // fire all rules   
 	    //kSession.fireAllRules();
         }
