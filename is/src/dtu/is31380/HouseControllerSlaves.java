@@ -131,15 +131,19 @@ public class HouseControllerSlaves extends AbstractHouseController {
 	            	            	
 	            	HouseControllerInterface intf=getInterface();
 	            	System.out.println(Thread.currentThread().getName() + " is running. I will take care of "+ room.getName()+"'s setpoints");
+	            	
 	            	/*
 	            	 * This is the run method of the slave thread. 
 	            	 * Make it listen to the "master".
 	            	 */
-
+	            	
+	            	
 	            	
 	            	while(1==1)
 	                {
-	                /*
+	            		String[] sensors = room.getSensors().get(0).toString().split("\"");
+	            		System.out.println(sensors[1]);
+	            	/*
 	                 * Read setpoints from master
 	                 * Set the setpoint
 	                 */

@@ -1,0 +1,72 @@
+/*
+*  Inference example based on Drools documentation 
+* https://docs.jboss.org/drools/release/6.5.0.Final/drools-docs/html/ch06.html#d0e5521
+*
+*  Kai Heussen, 04/10/2017
+*/
+
+package dtu.is31380.busPass;
+
+
+
+// Predicates	
+declare IsAdult
+	person : Person
+end	
+declare IsChild
+	person : Person
+end	
+declare BusPass
+	person : Person
+end
+declare ChildBusPass extends BusPass
+end	
+declare AdultBusPass extends BusPass
+end	
+
+function void requestChildBusPass(Person p) {
+	System.out.println("Dear "+p.getName()+", please return your Child bus pass!");
+}
+	
+
+rule "Infer Child" 
+when
+    $p : Person( age < 16 )
+then
+    insertLogical( new IsChild( $p ) );
+      System.out.println("Recognized "+$p.getName()+ " as child."); 
+end
+
+rule "Infer Adult" 
+when
+    $p : Person( age >= 16 )
+then
+    insertLogical( new IsAdult( $p ) );
+      System.out.println("Recognized "+$p.getName()+ " as adult.");
+    
+end
+
+
+rule "Issue Child Bus Pass" when
+    $p : Person( )
+         IsChild( person == $p )
+then
+    insertLogical(new ChildBusPass( $p ) );
+end
+ 
+rule "Issue Adult Bus Pass" 
+when
+    $p : Person( age >= 16 )
+         IsAdult( person == $p )
+then
+    insertLogical(new AdultBusPass( $p ) );
+end
+
+
+rule "Return ChildBusPass Request "
+when
+    $p : Person( )
+    not( ChildBusPass( person == $p ) )
+then
+    requestChildBusPass( $p );
+end

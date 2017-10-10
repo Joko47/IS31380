@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class HouseController2 extends AbstractHouseController implements TemperatureGUIListener{
 
-	double setPoint = 20;
-	double delta = 1.5;
+	double[] setPoint = {20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0};
+	double[] delta = {1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5};
 	int roomNumber;
 	
 	public HouseController2(int number) {
@@ -20,13 +20,17 @@ public class HouseController2 extends AbstractHouseController implements Tempera
       System.out.println("Temperature is: "+intf.getSensorValue("s_tempr"+roomNumber));
       System.out.println("Setpoint is: "+setPoint);
   
-      // conditions for turning on
-  	if (setPoint- intf.getSensorValue("s_tempr"+roomNumber) > delta ) {
-          //System.out.println(setPoint- intf.getSensorValue("s_tempr"+(i+1))+" : turning ON");
-  		System.out.println("Turning actuator ON");
- 		// turning actuator on
-         	intf.setActuator("a_htrr"+roomNumber+"_1", 1.0); //switch heater in room i on
-  	}
+   // conditions for turning on
+		if (setpoint[i] - delta > intf.getSensorValue(names[0])  ) {
+			for(int i=1;i<acc+1;i++){
+				if(intf.getActuatorSetpoint(names[1]+"_"+i)!=1.0) {
+					//System.out.println(setPoint- intf.getSensorValue("s_tempr"+(i+1))+" : turning ON");
+					System.out.println("Turning actuator "+names[1]+"_"+i+" ON");
+					// turning actuator on
+					intf.setActuator((names[1]+"_"+i), 1.0); //switch heater in room i on
+				}
+			}
+		}
   	
   	// Conditions for turning off
   	if (setPoint- intf.getSensorValue("s_tempr"+roomNumber) <= delta ) {
