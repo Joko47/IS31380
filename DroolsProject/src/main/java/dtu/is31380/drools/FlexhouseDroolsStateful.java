@@ -62,12 +62,12 @@ public class FlexhouseDroolsStateful extends AbstractHouseController {
         		}       				 
      	    }
         	// Now fire all rules!
-        	kSession.fireAllRules();
+        	//kSession.fireAllRules();
         	// or just a subset filtered by rule name
     	    //kSession.fireAllRules(new RuleNameStartsWithAgendaFilter("turn"));
     	    //kSession.fireAllRules(new RuleNameStartsWithAgendaFilter("test"));
     	    //kSession.fireAllRules(new RuleNameEndsWithAgendaFilter("on"));
-        	//kSession.fireAllRules(new RuleNameEndsWithAgendaFilter("check"));
+        	kSession.fireAllRules(new RuleNameStartsWithAgendaFilter("check"));
      	   
         } catch (Throwable t) {
             t.printStackTrace();
@@ -101,8 +101,8 @@ public class FlexhouseDroolsStateful extends AbstractHouseController {
   
  	    facts = new ArrayList<FactHandle>();
  	    
- 	    kSession.insert(new SetPoint("s_tempr1",11.0));
- 	    kSession.insert(new SetPoint("s_tempr2",40.0));
+ 	    //kSession.insert(new SetPoint("s_tempr1",11.0));
+ 	    //kSession.insert(new SetPoint("s_tempr2",40.0));
 	    
  	    // iterate through list of objects and Insert to Drools engine.
  	    for (Object jobj : objList) {

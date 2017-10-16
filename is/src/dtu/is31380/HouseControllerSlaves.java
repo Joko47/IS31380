@@ -9,16 +9,19 @@ public class HouseControllerSlaves extends AbstractHouseController {
 	
 	private Collection<Thread> slaves; 
 	// define local a local field variables for setpoints & deltas for each room.
-	double[] setpoint = {20,20,20,20,20,20,20,20};
-	double delta = 0.5;
+    private double[] setpoint = {20,20,20,20,20,20,20,20};
+	private double delta = 0.5;
+
 		
   public HouseControllerSlaves() {
     super(5000); //set timestep to 5000ms
+    
   }
     
   @Override
   protected void execute() {
     HouseControllerInterface intf=getInterface();
+
     
     
     /*
@@ -31,7 +34,7 @@ public class HouseControllerSlaves extends AbstractHouseController {
     	} catch(InterruptedException e) {
     	    System.out.println("got interrupted!");
     	}
-    	System.out.print(" Setpoints: ");
+    	System.out.print("Setpoints: ");
     	System.out.print(setpoint[0]+", ");
     	System.out.print(setpoint[1]+", ");
     	System.out.print(setpoint[2]+", ");
@@ -42,14 +45,14 @@ public class HouseControllerSlaves extends AbstractHouseController {
     	System.out.print(setpoint[7]);
     	System.out.println("");
     	System.out.print("Temperature: ");
-    	System.out.print(intf.getSensorValue("s_tempmain")+", ");
-    	System.out.print(intf.getSensorValue("s_tempr1")+", ");
-    	System.out.print(intf.getSensorValue("s_tempr2")+", ");
-    	System.out.print(intf.getSensorValue("s_tempr3")+", ");
-    	System.out.print(intf.getSensorValue("s_tempr4")+", ");
-    	System.out.print(intf.getSensorValue("s_tempr5")+", ");
-    	System.out.print(intf.getSensorValue("s_tempr6")+", ");
-    	System.out.print(intf.getSensorValue("s_tempr7"));
+    	System.out.print(intf.getSensorValue("s_tempmain").floatValue()+", ");
+    	System.out.print(intf.getSensorValue("s_tempr1").floatValue()+", ");
+    	System.out.print(intf.getSensorValue("s_tempr2").floatValue()+", ");
+    	System.out.print(intf.getSensorValue("s_tempr3").floatValue()+", ");
+    	System.out.print(intf.getSensorValue("s_tempr4").floatValue()+", ");
+    	System.out.print(intf.getSensorValue("s_tempr5").floatValue()+", ");
+    	System.out.print(intf.getSensorValue("s_tempr6").floatValue()+", ");
+    	System.out.print(intf.getSensorValue("s_tempr7").floatValue());
     	System.out.println("");
     	
     	
@@ -74,6 +77,8 @@ public class HouseControllerSlaves extends AbstractHouseController {
 	            	int acc = 0;
 	            	int p = 0;
 	            	double spOld = 0;
+	            	
+	            	
 	            	
 	            	if(room.getName().equals("Main hall")) {
 	            		names[0]="s_tempmain";
@@ -124,7 +129,7 @@ public class HouseControllerSlaves extends AbstractHouseController {
 	            		p = 7;
 	    			}
 	    			else {
-	    				System.out.println("Error in room: "+Thread.currentThread().getName());
+	    				System.out.println("ERROR(Room not found): in "+Thread.currentThread().getName());
 	    			}
 	            
 	    
@@ -141,14 +146,7 @@ public class HouseControllerSlaves extends AbstractHouseController {
 	            	
 	            	while(1==1)
 	                {
-	            		String[] sensors = room.getSensors().get(0).toString().split("\"");
-	            		System.out.println(sensors[1]);
-	            	/*
-	                 * Read setpoints from master
-	                 * Set the setpoint
-	                 */
-	                
-	                
+	            		                
 	                if(setpoint[p]!=spOld) {
 	    			System.out.println(room.getName());
 	    			System.out.println("Temperature is: "+intf.getSensorValue(names[0]));

@@ -8,6 +8,7 @@ import dtu.is31380.SystemConstants.DeviceType
 import dtu.is31380.BuildingConfig
 import dtu.is31380.RoomConfig
 import dtu.is31380.HouseControllerInterface
+import dtu.is31380.DoorConfig
 
 
 //declare any global variables here
@@ -47,16 +48,14 @@ rule "turn-on"
     when
         //conditions
        b : BuildingConfig()
-       t : SetPoint(name == s.name) 
-       //s : Sensor(type == DeviceType.Temperature, value < 21)
-       s : Sensor(type == DeviceType.Temperature, value < t.temp)       
+       s : Sensor(type == DeviceType.Temperature, value < 21)      
        $rs : RoomConfig() from b.getRoomForSensor(s.getName())
        a : Actuator( type == DeviceType.PowerControlledHeater, value != 1.0) 
        ra : RoomConfig( name == $rs.name) from b.getRoomForActuator(a.getName())
        intf : HouseControllerInterface()
     then
         //actions
-    	System.out.println(intf.getSimulationTime().toString()+ " : Turning on  "+a.getName()+" as "+s.getName()+" in room "+ra.getRoomName()+" is below " +t.getTemp()+" degrees");       
+    	System.out.println(intf.getSimulationTime().toString()+ " : Turning on  "+a.getName()+" as "+s.getName()+" in room "+ra.getRoomName()+" is below degrees");       
 		intf.setActuator(a.getName(),1.0);
 end
 
@@ -65,27 +64,31 @@ rule "turn-off"
     when
         //conditions
        b : BuildingConfig()
-       s : Sensor(type == DeviceType.Temperature, value > t.temp)
-       t : SetPoint(name == s.name) 
-       //s : Sensor(type == DeviceType.Temperature, value > 22)
-       	    
+       s : Sensor(type == DeviceType.Temperature, value > 22)	    
        $rs : RoomConfig() from b.getRoomForSensor(s.getName())
        a : Actuator( type == DeviceType.PowerControlledHeater, value != 0.0) 
        ra : RoomConfig( name == $rs.name) from b.getRoomForActuator(a.getName())
        intf : HouseControllerInterface()
     then
         //actions
-    	 System.out.println(intf.getSimulationTime().toString()+ " : Turning off  "+a.getName()+" as "+s.getName()+" in room "+ra.getRoomName()+" is above "+t.getTemp()+" degrees");       
+    	 System.out.println(intf.getSimulationTime().toString()+ " : Turning off  "+a.getName()+" as "+s.getName()+" in room "+ra.getRoomName()+" is above 22 degrees");       
 		intf.setActuator(a.getName(),0.0);
 end
 
-rule "test"	
+rule "check-door"
 	when
-		s : SetPoint()
+		b : BuildingConfig()
+		s : Sensor(type == DeviceType.Door, value == 1)
+		r1 : RoomConfig() from b.getRoomForSensor(s.getName())
+		rd : DoorConfig() from r1.getDoors()
+		r2 : RoomConfig(name != r1.name) from rd.getLinkedSpaces()
+		
 	then
-		System.out.println(s.getName());
-		System.out.println(s.getTemp());
+		System.out.println(""+rd.getName()+" in "+r1.getName()+" is open connecting to " + r2.getName());
+		System.out.println("Air area is now: "+(((r1.getFloorArea())*(r1.getRoomHeight()))+(r2.getFloorArea())*(r2.getRoomHeight())));
+		
 end
+
 
 /*
 rule "check-floor-area2"
@@ -107,6 +110,22 @@ rule "check-air-area2"
 		a2 : Actuator( type == DeviceType.PowerControlledHeater, this != a) 
 		ra : RoomConfig( $area : innerWallArea, rname : name) from b.getRoomForActuator(a.getName())
 		ra2 : RoomConfig( rname == name) from b.getRoomForActuator(a2.getName())	
+    then
+        System.out.println(rname+" AirVolume: " +  (ra.getFloorArea()*(ra.getRoomHeight())));
+
+end
+*/
+
+/*
+rule "Door-open"
+    when
+       	b : BuildingConfig()
+      	
+      	a : Actuator( type == DeviceType.PowerControlledHeater) 
+		a2 : Actuator( type == DeviceType.PowerControlledHeater, this != a) 
+		ra : RoomConfig( $area : innerWallArea, rname : name) from b.getRoomForActuator(a.getName())
+		ra2 : RoomConfig( rname == name) from b.getRoomForActuator(a2.getName())	
+		
     then
         System.out.println(rname+" AirVolume: " +  (ra.getFloorArea()*(ra.getRoomHeight())));
 
