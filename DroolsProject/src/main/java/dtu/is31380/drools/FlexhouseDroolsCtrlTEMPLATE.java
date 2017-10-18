@@ -15,6 +15,7 @@ import dtu.is31380.BuildingConfig;
 import dtu.is31380.HouseControllerInterface;
 import dtu.is31380.RoomConfig;
 import dtu.is31380.Sensor;
+import dtu.is31380.drools.VirtualRoom;
 
 
 public class FlexhouseDroolsCtrlTEMPLATE extends AbstractHouseController {
@@ -22,47 +23,9 @@ public class FlexhouseDroolsCtrlTEMPLATE extends AbstractHouseController {
 	private KieServices kieServices;
 	private KieContainer kContainer;
 	private StatelessKieSession kSession;
+	//private KieSession kSession;
 	
-	public class VirtualRoom {
-		private String[] containedRooms;
-		private String[] containedSensors;
-		private String[] containedActuators;
-		private Double[] containedSetpoints;
-		private double containedAir;
-
-		public String[] getRooms() {
-			return containedRooms;
-		}
-		public String[] getSensors() {
-			return containedSensors;
-		}
-		public String[] getActuators() {
-			return containedActuators;
-		}
-		public Double[] getSetpoint() {
-			return containedSetpoints;
-		}
-		public double getAir() {
-			return containedAir;
-		}
-		
-		
-		public void setRooms(String[] rooms) {
-			containedRooms = rooms;
-		}
-		public void setSensors(String[] sensors) {
-			containedSensors = sensors;
-		}
-		public void setActuators(String[] actuators) {
-			containedActuators = actuators;
-		}
-		public void setSetpoint(Double[] setpoints) {
-			containedSetpoints = setpoints;
-		}
-		public void getAir(double Air) {
-			containedAir = Air;
-		}
-	}
+	
 	
 	  public FlexhouseDroolsCtrlTEMPLATE() {
 	    super(5000); //set timestep to 5000ms
@@ -72,7 +35,9 @@ public class FlexhouseDroolsCtrlTEMPLATE extends AbstractHouseController {
         	 kContainer = kieServices.getKieClasspathContainer();
         	 // OBS! due to REACTIVE AGENT design, we use a "STATELESS" session
         	 kSession = kContainer.newStatelessKieSession("ksession-q23rules");  
-        			// this name for the rule package "ksession-rules" is configured in kmodule.xml     	
+        	 //kSession = kContainer.newKieSession("ksession-q23rules");  
+         	
+        	 // this name for the rule package "ksession-rules" is configured in kmodule.xml     	
         	 System.out.println("Rule engine initialized successfully.");
         } catch (Throwable t) {
             t.printStackTrace();
@@ -87,7 +52,23 @@ public class FlexhouseDroolsCtrlTEMPLATE extends AbstractHouseController {
  	    Sensor[] senslist = intf.getSensors();
  	    Actuator[] actlist = intf.getActuators();
  	    BuildingConfig buildg = intf.getBuildingConfig();
+ 	   
  	    
+ 	   List<VirtualRoom> house = new ArrayList<VirtualRoom>();
+	    
+	    for(int i = 0;i<8;i++) {
+	    	String[] rn = {"unknown"};
+	        if(i==0) {
+	        	rn[0] = "Main hall";
+	        }
+	        else {
+	        	rn[0] = "room"+i;
+	        }
+	        house.add(new VirtualRoom(rn));
+	        System.out.println("Loop "+i+" "+house);
+	    }
+	        System.out.println(house); 
+	        
  	    List<Object> news =  Arrays.asList( (Object[]) senslist );
  	    List<Object> newa = Arrays.asList( (Object[]) actlist);
  	    List<Object> listC = new ArrayList<>();
@@ -95,6 +76,7 @@ public class FlexhouseDroolsCtrlTEMPLATE extends AbstractHouseController {
  	    listC.addAll(newa);	
  	    listC.add((Object) buildg);
  	    listC.add((Object) intf);
+ 	    listC.addAll(house);
 
         try {
         	/*
@@ -120,6 +102,12 @@ public class FlexhouseDroolsCtrlTEMPLATE extends AbstractHouseController {
 	    ArrayList<RoomConfig> rooms=bc.getRooms();
 	    System.out.println("Rooms: "+rooms.toString());
 	    getInterface().setActuator("a_htrr1_1", 1.0);
+	    
+	    
+	    
+	    
+	    
+	    
 	  }
 	  
 	  

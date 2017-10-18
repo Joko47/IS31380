@@ -38,7 +38,7 @@ public class FlexhouseDroolsStateful2 extends AbstractHouseController {
             // load up the knowledge base
         	 kieServices = KieServices.Factory.get();
         	 kContainer = kieServices.getKieClasspathContainer();
-        	 kSession = kContainer.newKieSession("ksession-statefulRules");  
+        	 kSession = kContainer.newKieSession("ksession-q23statefulrules");  
         			// this name for the rule package "rulesStateful" as "ksession-rules-stateful" is configured in META-INF/kmodule.xml     	
         	 System.out.println("Rule engine initialized successfully.");
         } catch (Throwable t) {
@@ -61,9 +61,9 @@ public class FlexhouseDroolsStateful2 extends AbstractHouseController {
         		}       				 
      	    }
         	// Now fire all rules!
-        	//kSession.fireAllRules();
+        	kSession.fireAllRules();
         	// or just a subset filtered by rule name
-    	    kSession.fireAllRules(new RuleNameStartsWithAgendaFilter("turn"));
+    	    //kSession.fireAllRules(new RuleNameStartsWithAgendaFilter("turn"));
     	    //kSession.fireAllRules(new RuleNameEndsWithAgendaFilter("on"));
         	//kSession.fireAllRules(new RuleNameEndsWithAgendaFilter("check"));
      	   

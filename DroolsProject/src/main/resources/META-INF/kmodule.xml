@@ -6,8 +6,14 @@
     <kbase name="rules-Flex" packages="statefulRules">
         <ksession name="ksession-statefulRules"/>
     </kbase>
+    <kbase name="q23stateful" packages="q23statefulrules">
+        <ksession name="ksession-q23statefulrules"/>
+    </kbase>
     <kbase name="FlexRules" packages="rulesFlex">
         <ksession name="ksession-rulesFlex" type="stateless" />
+    </kbase>
+     <kbase name="q23ruless" packages="q23rules">
+        <ksession name="ksession-q23rules" type="stateless" />
     </kbase>
     <kbase name="dtables" packages="dtables">
         <ksession name="ksession-dtables"/>

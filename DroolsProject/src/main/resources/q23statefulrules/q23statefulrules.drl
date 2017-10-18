@@ -1,0 +1,62 @@
+//created on: Oct 17, 2017
+package q23rules
+
+//list any import classes here.
+import dtu.is31380.Sensor
+import dtu.is31380.Actuator
+import dtu.is31380.SystemConstants.DeviceType
+import dtu.is31380.BuildingConfig
+import dtu.is31380.RoomConfig
+import dtu.is31380.HouseControllerInterface
+import dtu.is31380.DoorConfig
+import dtu.is31380.drools.VirtualRoom
+
+
+//declare any global variables here
+
+
+
+rule "build-standard"
+    when
+		b  : BuildingConfig()
+		s : Sensor(type == DeviceType.Door)
+		r : RoomConfig() from b.getRoomForSensor(s.getName())
+		not VirtualRoom( containedRooms contains r.name )
+    then
+    	String[] temp = {r.getName()};
+    	insert(new VirtualRoom(temp));  
+    	System.out.println("Created a virtual room for: "+r.getName());     	
+end
+
+rule "post-standard"
+    when
+		vr : VirtualRoom()
+		
+    then
+    	System.out.println("found VirtualRoom: "+vr);       	
+end
+
+
+
+rule "test"
+
+    when
+		b  : BuildingConfig()
+		s  : Sensor(type == DeviceType.Door, value == 1)
+		r1 : RoomConfig() from b.getRoomForSensor(s.getName())
+		rd : DoorConfig() from r1.getDoors()
+		r2 : RoomConfig(name != r1.name) from rd.getLinkedSpaces()
+		vr : VirtualRoom( Rooms : containedRooms contains r2.name )
+		vr2: VirtualRoom( containedRooms contains r1.name )
+    then
+       	//System.out.println(""+r1.getName());
+       	System.out.println(""+rd.getName()+" in "+r1.getName()+" is open connecting to " + r2.getName());
+		//System.out.println("Air area is now: "+(((r1.getFloorArea())*(r1.getRoomHeight()))+(r2.getFloorArea())*(r2.getRoomHeight())));
+       	//System.out.println(""+java.util.Arrays.toString(Rooms)+" "+r1.getName()+" "+r2.getName());
+       	//System.out.println(""+java.util.Arrays.toString(vr2.getContainedRooms()));
+       	String[] rooms = {r1.getName(),r2.getName()};
+       	insert(new VirtualRoom(rooms));
+       	delete(vr2);
+       	delete(vr);
+       	
+end
