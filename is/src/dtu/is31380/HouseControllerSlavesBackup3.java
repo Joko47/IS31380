@@ -18,7 +18,7 @@ import commexercise.pubsub.PubSubSubscriberListener;
 
 
 
-public class HouseControllerSlaves extends AbstractHouseController {
+public class HouseControllerSlavesBackup3 extends AbstractHouseController {
 	private final SimpleDateFormat sdf = new SimpleDateFormat("[HH:mm:ss.SSS]");
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	
@@ -29,7 +29,7 @@ public class HouseControllerSlaves extends AbstractHouseController {
 	private double[] oldSetpoint = {20,20,20,20,20,20,20,20};
 
 		
-  public HouseControllerSlaves() {
+  public HouseControllerSlavesBackup3() {
     super(5000); //set timestep to 5000ms
     
   }
@@ -66,7 +66,7 @@ public class HouseControllerSlaves extends AbstractHouseController {
         
     	for(int x=0;x<8;x++) {
     		if(oldSetpoint[x] != setpoint[x]) {
-        		pubSubServer.send(""+roomname[x], new String[]{""+setpoint[x]});
+        		pubSubServer.send(""+roomname[x], new String[]{""+x,""+setpoint[x]});
         		log.info(sdf.format(new Date()) +"-Sim time: "+intf.getSimulationTime()+" "+"["+Thread.currentThread().getName()+"]"+" Sent setpoint "+setpoint[x]+" to "+roomname[x]);
         		oldSetpoint[x] = setpoint[x];
         	}
@@ -84,7 +84,7 @@ public class HouseControllerSlaves extends AbstractHouseController {
 	  log.info(sdf.format(new Date()) + " Starting slaves");
 	  for (RoomConfig room : rooms) {
 		  slaves.add(new Thread(new Runnable() {
-			  double thisSetpoint = 20;
+			  double[] thisSetpoint = {20,20,20,20,20,20,20,20};
 			  	// This is an inline anonymous class definition for your convenience).
 	            @Override
 	            public void run(){
@@ -101,7 +101,10 @@ public class HouseControllerSlaves extends AbstractHouseController {
 	            	
 	            	PubSubCallbackListener clockListener = new PubSubCallbackListener() {
 	                    public void messageReceived(String[] msg) {
-	                    	thisSetpoint = Double.valueOf(msg[0]);
+	                    	Double d = new Double(1.23);
+	                    	d = Double.valueOf(msg[0]);
+	                    	int i = d.intValue();
+	                    	thisSetpoint[i] = Double.valueOf(msg[1]);
 	                    	log.info(sdf.format(new Date()) +"-Sim time: "+intf.getSimulationTime()+" "+"["+Thread.currentThread().getName()+"]"+" Recieved new setpoint: "+msg[0]);
 	                    }
 	                };
@@ -185,9 +188,9 @@ public class HouseControllerSlaves extends AbstractHouseController {
 	            /*		log.info(sdf.format(new Date()) +"-Sim time "+intf.getSimulationTime(
 	            				)+" "+"["+Thread.currentThread().getName()+"]"++": "+room.getName()+"Temp is "+intf.getSensorValue(names[0])+", Setpoint is "+setpoint[p]
 	            				 +", delta is "+delta+", diferense is "+(intf.getSensorValue(names[0])-setpoint[p]));
-	            */		if(thisSetpoint!=spOld) {
+	            */		if(thisSetpoint[p]!=spOld) {
 	            	log.info(sdf.format(new Date()) +"-Sim time "+intf.getSimulationTime(
-            				)+" "+"["+Thread.currentThread().getName()+"]"+": "+room.getName()+" temp is "+intf.getSensorValue(names[0])+", Setpoint is "+setpoint[p]
+            				)+" "+"["+Thread.currentThread().getName()+"]"+": "+room.getName()+"Temp is "+intf.getSensorValue(names[0])+", Setpoint is "+setpoint[p]
             				 +", delta is "+delta+", difference is "+(intf.getSensorValue(names[0])-setpoint[p]));
 	            			spOld = setpoint[p];
 	            		}
@@ -198,7 +201,7 @@ public class HouseControllerSlaves extends AbstractHouseController {
 	            				if(intf.getActuatorSetpoint(names[1]+"_"+i)!=1.0) {
 	            					
 	            					// turning actuator on
-	            					log.info(sdf.format(new Date()) +"-Sim time: "+intf.getSimulationTime()+" "+"["+Thread.currentThread().getName()+"]"+" Turning on actuator "+names[1]+"_"+i +" in "+room.getName());
+	            					log.info(sdf.format(new Date()) +"-Sim time: "+intf.getSimulationTime()+" "+"["+Thread.currentThread().getName()+"]"+" Turning on actuator(s) in "+room.getName());
 	            					intf.setActuator((names[1]+"_"+i), 1.0); //switch heater in room i on
 	            				}
 	            			}
@@ -210,7 +213,7 @@ public class HouseControllerSlaves extends AbstractHouseController {
 	            			for(int i=1;i<acc+1;i++){
 	            				if(intf.getActuatorSetpoint(names[1]+"_"+i)!=0.0) {
 	            					// Turnin actuator off
-	            					log.info(sdf.format(new Date()) +"-Sim time: "+intf.getSimulationTime()+" "+"["+Thread.currentThread().getName()+"]"+" Turning off actuator "+names[1]+"_"+i +" in "+room.getName());
+	            					log.info(sdf.format(new Date()) +"-Sim time: "+intf.getSimulationTime()+" "+"["+Thread.currentThread().getName()+"]"+" Turning off actuator(s) in "+room.getName());
 	            					intf.setActuator((names[1]+"_"+i), 0.0); //switch heater in room i off
 	            				}
 	            			}

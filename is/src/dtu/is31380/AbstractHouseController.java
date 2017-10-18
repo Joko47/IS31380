@@ -7,7 +7,7 @@ public abstract class AbstractHouseController implements Runnable {
   private long timestep;
   private static final long TIMESTEP=1000;
   
-  protected AbstractHouseController() {
+  protected AbstractHouseController()  {
     this(0);
   }
   

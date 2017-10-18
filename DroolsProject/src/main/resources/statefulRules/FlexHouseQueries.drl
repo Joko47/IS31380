@@ -11,6 +11,7 @@ import dtu.is31380.HouseControllerInterface
 import dtu.is31380.DoorConfig
 
 
+
 //declare any global variables here
 
 /*
@@ -86,6 +87,37 @@ rule "check-door"
 	then
 		System.out.println(""+rd.getName()+" in "+r1.getName()+" is open connecting to " + r2.getName());
 		System.out.println("Air area is now: "+(((r1.getFloorArea())*(r1.getRoomHeight()))+(r2.getFloorArea())*(r2.getRoomHeight())));
+		
+end
+
+rule "check-roomCollection"
+	when
+		b : BuildingConfig()
+		s : Sensor(type == DeviceType.Door, value == 1)
+		
+	then
+		
+end
+	
+
+/*
+
+Lav object til sammenkoblede rum
+opret samlet rum, når dør åbner
+benyt rum, hvis dør er åben
+slet rum når dør lukker
+benyt normale rum
+
+*/
+rule "virt-room"
+	when
+		b : BuildingConfig()
+		s : Sensor(type == DeviceType.Door, value == 1)
+		r1 : RoomConfig() from b.getRoomForSensor(s.getName())
+		rd : DoorConfig() from r1.getDoors()
+		r2 : RoomConfig(name != r1.name) from rd.getLinkedSpaces()
+	then
+		
 		
 end
 

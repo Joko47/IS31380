@@ -26,6 +26,8 @@ import dtu.is31380.Sensor;
  */
 public class FlexhouseDroolsStateful extends AbstractHouseController {
 
+	
+
 	private KieServices kieServices;
 	private KieContainer kContainer;
 	private KieSession kSession;

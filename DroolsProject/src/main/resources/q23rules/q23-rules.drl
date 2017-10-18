@@ -1,0 +1,39 @@
+//created on: Oct 17, 2017
+package q23rules
+
+//list any import classes here.
+import dtu.is31380.Sensor
+import dtu.is31380.Actuator
+import dtu.is31380.SystemConstants.DeviceType
+import dtu.is31380.BuildingConfig
+import dtu.is31380.RoomConfig
+import dtu.is31380.HouseControllerInterface
+import dtu.is31380.DoorConfig
+
+
+//declare any global variables here
+
+
+
+
+rule "Your First Rule"
+
+    when
+        b : BuildingConfig()
+		s : Sensor(type == DeviceType.Door, value == 1)
+		r1 : RoomConfig() from b.getRoomForSensor(s.getName())
+		rd : DoorConfig() from r1.getDoors()
+		r2 : RoomConfig(name != r1.name) from rd.getLinkedSpaces()
+    then
+        //actions
+
+end
+
+rule "Your Second Rule"
+    //include attributes such as "salience" here...
+    when
+        //conditions
+    then
+        //actions
+
+end
