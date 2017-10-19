@@ -31,8 +31,8 @@ public class FlexhouseDroolsStateful2 extends AbstractHouseController {
 	private KieSession kSession;
 	private List<FactHandle> facts;
 	private List<Object> objList;
-	public double[] setpoint = {20,20,20,20,20,20,20,20};
-	
+	//public double[] setpoint = {20,20,20,20,20,20,20,20};
+
 	
 	  public FlexhouseDroolsStateful2() {
 	    super(5000); //set timestep to 5000ms
@@ -48,6 +48,10 @@ public class FlexhouseDroolsStateful2 extends AbstractHouseController {
         }
 	  }
 	  
+	  
+	  
+	   	
+	   	
 	  @Override
 	  protected void execute() {
         try {
@@ -70,7 +74,6 @@ public class FlexhouseDroolsStateful2 extends AbstractHouseController {
         	//kSession.fireAllRules(new RuleNameStartsWithAgendaFilter("test"));
      	 
            	
-          	
         	
         } catch (Throwable t) {
             t.printStackTrace();

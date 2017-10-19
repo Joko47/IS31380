@@ -11,8 +11,12 @@ public class VirtualRoom {
 	private Double[] containedSetpoints;
 	private double containedAir;
 	
-	public VirtualRoom(String[] Room) {
+	public VirtualRoom(String[] Room, String[] Sens, String[] Act, Double[] Set, double Air) {
 	    containedRooms = Room;
+	    containedSensors = Sens;
+		containedActuators = Act;
+		containedSetpoints = Set;
+		containedAir = Air;
 
 	}
 	
@@ -26,7 +30,7 @@ public class VirtualRoom {
 	public String[] getContainedActuators() {
 		return containedActuators;
 	}
-	public Double[] getContainedSetpoint() {
+	public Double[] getContainedSetpoints() {
 		return containedSetpoints;
 	}
 	public double getContainedAir() {
@@ -43,7 +47,7 @@ public class VirtualRoom {
 	public void setContainedActuators(String[] actuators) {
 		containedActuators = actuators;
 	}
-	public void setContainedSetpoint(Double[] setpoints) {
+	public void setContainedSetpoints(Double[] setpoints) {
 		containedSetpoints = setpoints;
 	}
 	public void getContainedAir(double Air) {
