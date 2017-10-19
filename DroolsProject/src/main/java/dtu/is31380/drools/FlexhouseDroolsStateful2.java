@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+
 import org.drools.core.base.RuleNameStartsWithAgendaFilter;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
@@ -30,6 +31,7 @@ public class FlexhouseDroolsStateful2 extends AbstractHouseController {
 	private KieSession kSession;
 	private List<FactHandle> facts;
 	private List<Object> objList;
+	public double[] setpoint = {20,20,20,20,20,20,20,20};
 	
 	
 	  public FlexhouseDroolsStateful2() {
@@ -65,8 +67,11 @@ public class FlexhouseDroolsStateful2 extends AbstractHouseController {
         	// or just a subset filtered by rule name
     	    //kSession.fireAllRules(new RuleNameStartsWithAgendaFilter("turn"));
     	    //kSession.fireAllRules(new RuleNameEndsWithAgendaFilter("on"));
-        	//kSession.fireAllRules(new RuleNameEndsWithAgendaFilter("check"));
-     	   
+        	//kSession.fireAllRules(new RuleNameStartsWithAgendaFilter("test"));
+     	 
+           	
+          	
+        	
         } catch (Throwable t) {
             t.printStackTrace();
         }

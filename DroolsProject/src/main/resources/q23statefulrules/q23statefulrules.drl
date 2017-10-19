@@ -19,11 +19,29 @@ import dtu.is31380.drools.VirtualRoom
 rule "build-standard"
     when
 		b  : BuildingConfig()
-		s : Sensor(type == DeviceType.Door)
-		r : RoomConfig() from b.getRoomForSensor(s.getName())
+		ds : Sensor(type == DeviceType.Door)
+		r  : RoomConfig() from b.getRoomForSensor(ds.getName())
+		
 		not VirtualRoom( containedRooms contains r.name )
     then
+    	String rc = r.toString();
+    	String[] split=rc.split("\""); 
     	String[] temp = {r.getName()};
+    	System.out.println(java.util.Arrays.toString(split));
+    	String[] tsens = null;
+    	String[] a = {null,null};
+    	int ai = 0;
+    	for(int i =0;i<split.length;i++){
+    		if(split[i].startsWith("s_temp")){
+    		tsens[0] = split[i];
+    		}
+    		else if(split[i].startsWith("a_htr")){
+    		a[ai] = split[i];
+    		ai++;
+    		}
+    	}
+    	double air = (r.getFloorArea()*r.getRoomHeight());
+    	double sp = 20;
     	insert(new VirtualRoom(temp));  
     	System.out.println("Created a virtual room for: "+r.getName());     	
 end
@@ -46,17 +64,53 @@ rule "test"
 		r1 : RoomConfig() from b.getRoomForSensor(s.getName())
 		rd : DoorConfig() from r1.getDoors()
 		r2 : RoomConfig(name != r1.name) from rd.getLinkedSpaces()
-		vr : VirtualRoom( Rooms : containedRooms contains r2.name )
-		vr2: VirtualRoom( containedRooms contains r1.name )
+		vr : VirtualRoom( containedRooms contains r2.name )
+		vr2: VirtualRoom( containedRooms contains r1.name, containedRooms not contains r2.name )
     then
        	//System.out.println(""+r1.getName());
        	System.out.println(""+rd.getName()+" in "+r1.getName()+" is open connecting to " + r2.getName());
 		//System.out.println("Air area is now: "+(((r1.getFloorArea())*(r1.getRoomHeight()))+(r2.getFloorArea())*(r2.getRoomHeight())));
        	//System.out.println(""+java.util.Arrays.toString(Rooms)+" "+r1.getName()+" "+r2.getName());
        	//System.out.println(""+java.util.Arrays.toString(vr2.getContainedRooms()));
-       	String[] rooms = {r1.getName(),r2.getName()};
-       	insert(new VirtualRoom(rooms));
+       	String[] rooms=new String[(vr.getContainedRooms().length+vr2.getContainedRooms().length)];
+       	for(int i=0; i<(vr.getContainedRooms().length);i++){
+       	rooms[i]=vr.getContainedRooms()[i];
+       	}
+       	for(int i=0; i<(vr2.getContainedRooms().length);i++){
+       	rooms[(i+vr.getContainedRooms().length)]=vr2.getContainedRooms()[i];
+       	}
        	delete(vr2);
        	delete(vr);
-       	
+       	insert(new VirtualRoom(rooms));  	
+end
+
+rule "test2"
+
+    when
+		b  : BuildingConfig()
+		s  : Sensor(type == DeviceType.Door, value == 0)
+		r1 : RoomConfig() from b.getRoomForSensor(s.getName())
+		rd : DoorConfig() from r1.getDoors()
+		r2 : RoomConfig(name != r1.name) from rd.getLinkedSpaces()
+		vr : VirtualRoom( containedRooms contains r1.name, containedRooms contains r2.name )
+    then
+       	//System.out.println(""+r1.getName());
+       	System.out.println(""+rd.getName()+" in "+r1.getName()+" is closed disconnecting " + r2.getName());
+		//System.out.println("Air area is now: "+(((r1.getFloorArea())*(r1.getRoomHeight()))+(r2.getFloorArea())*(r2.getRoomHeight())));
+       	//System.out.println(""+java.util.Arrays.toString(Rooms)+" "+r1.getName()+" "+r2.getName());
+       	//System.out.println(""+java.util.Arrays.toString(vr2.getContainedRooms()));
+       	String[] rooms=new String[(vr.getContainedRooms().length-1)];
+       	int t=0;
+       	for(int i=0; i<vr.getContainedRooms().length;i++){
+       		if(vr.getContainedRooms()[i]!=r1.getName()){
+       			rooms[i-t]=vr.getContainedRooms()[i];
+       		}
+       		else{
+       			t++;
+       		}
+       	}
+       	String[] single = {r1.getName()};
+       	delete(vr);
+       	insert(new VirtualRoom(rooms));
+       	insert(new VirtualRoom(single));  	
 end

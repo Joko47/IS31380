@@ -64,6 +64,7 @@ public class FlexhouseDroolsCtrlTEMPLATE extends AbstractHouseController {
 	        else {
 	        	rn[0] = "room"+i;
 	        }
+	        
 	        house.add(new VirtualRoom(rn));
 	        System.out.println("Loop "+i+" "+house);
 	    }
