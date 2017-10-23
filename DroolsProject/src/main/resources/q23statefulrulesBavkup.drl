@@ -14,53 +14,7 @@ import dtu.is31380.drools.VirtualRoom
 
 //declare any global variables here
 
-rule "update-temp"
-	when
-		b  	: BuildingConfig()
-       	s  	: Sensor(type == DeviceType.Temperature)      
-      	rs 	: RoomConfig() from b.getRoomForSensor(s.getName())
-       	vr 	: VirtualRoom( containedRooms contains rs.name )
-	then
-		int index = -1;
-        for(int i=0;i<vr.getContainedRooms().length;i++){
-        	if(rs.getName().equals(vr.getContainedRooms()[i])){
-        	index = i;
-        	}
-        }
-        Double[] temp = vr.getContainedTemps();
-        temp[index] = s.getValue();
-		vr.setContainedTemps(temp);
-	end
 
-rule "set-actuator"
-when
-       b  	: BuildingConfig()
-       vr  	: VirtualRoom()
-       intf : HouseControllerInterface()
-    then
-    	double temps=0;
-    	for(int i = 0;i<vr.getContainedRooms().length;i++){
-			temps+=vr.getContainedTemps()[i]*vr.getContainedWeight()[i];
-		}
-		System.out.println("Temp: "+temps+" in "+java.util.Arrays.toString(vr.getContainedRooms()));
-     	if(temps < vr.getContainedAvSp()-0.5){
-        	for(int i=0;i<vr.getContainedActuators().length;i++){
-        		if(intf.getActuatorSetpoint(vr.getContainedActuators()[i]) != 1.0){
-      				intf.setActuator(vr.getContainedActuators()[i], 1.0);
-       				System.out.println(intf.getSimulationTime().toString()+ " : Turning on "+vr.getContainedActuators()[i]+" as "+java.util.Arrays.toString(vr.getContainedRooms())+" are under "+(vr.getContainedAvSp()-0.5));
-        			}
-        		}
-        }
-        if(temps > vr.getContainedAvSp()+0.5){
-        	for(int i=0;i<vr.getContainedActuators().length;i++){
-        		if(intf.getActuatorSetpoint(vr.getContainedActuators()[i]) != 0.0){
-      				intf.setActuator(vr.getContainedActuators()[i], 0.0);
-       				System.out.println(intf.getSimulationTime().toString()+ " : Turning off "+vr.getContainedActuators()[i]+" as "+java.util.Arrays.toString(vr.getContainedRooms())+" are over "+(vr.getContainedAvSp()+0.5));
-        			}
-        		}
-        }
-
-end
 
 rule "build-standard"
     when
@@ -75,9 +29,6 @@ rule "build-standard"
     	String[] temp = {r.getName()};
     	String[] tsens = {null};
     	String[] a = {null,null};
-    	Double[] weight = {1.0};
-    	Double[] cubic = {(r.getFloorArea()*r.getRoomHeight())};
-    	Double[] temps = {null};
     	int ai = 0;
     	for(int i =0;i<split.length;i++){
     		if(split[i].startsWith("s_temp")){;
@@ -94,8 +45,7 @@ rule "build-standard"
     	}
     	double air = (r.getFloorArea()*r.getRoomHeight());
     	Double[] sp = {20.0};
-    	double spAverage = 20.0;
-    	insert(new VirtualRoom(temp,tsens,a,sp,air,spAverage,weight,cubic,temps));  
+    	insert(new VirtualRoom(temp,tsens,a,sp,air));  
     	System.out.println("Created a virtual room for: "+r.getName());     	
 end
 
@@ -120,37 +70,26 @@ rule "door-open"
 		vr : VirtualRoom( containedRooms contains r2.name )
 		vr2: VirtualRoom( containedRooms contains r1.name, containedRooms not contains r2.name )
     then
+       	//System.out.println(""+r1.getName());
        	System.out.println(""+rd.getName()+" in "+r1.getName()+" is open connecting to " + r2.getName());
+		//System.out.println("Air area is now: "+(((r1.getFloorArea())*(r1.getRoomHeight()))+(r2.getFloorArea())*(r2.getRoomHeight())));
+       	//System.out.println(""+java.util.Arrays.toString(Rooms)+" "+r1.getName()+" "+r2.getName());
+       	//System.out.println(""+java.util.Arrays.toString(vr2.getContainedRooms()));
        	String[] rooms=new String[(vr.getContainedRooms().length+vr2.getContainedRooms().length)];
        	String[] tsens=new String[(vr.getContainedSensors().length+vr2.getContainedSensors().length)];
        	String[] a=new String[(vr.getContainedActuators().length+vr2.getContainedActuators().length)];
        	Double[] sp=new Double[(vr.getContainedSetpoints().length+vr2.getContainedSetpoints().length)];
-       	Double[] weight = new Double[(vr.getContainedWeight().length+vr2.getContainedWeight().length)];
-       	Double[] cubic = new Double[(vr.getContainedCubic().length+vr2.getContainedCubic().length)];
-       	Double[] temps = new Double[(vr.getContainedTemps().length+vr2.getContainedTemps().length)];
-       	double spAverage=0; //setpoint average for vr
-double test=0;
-       	double air=0.0; 
-       	air+=vr.getContainedAir();
-       	air+=vr2.getContainedAir();
+       	double air =0.0; 
        	for(int i=0; i<(vr.getContainedRooms().length);i++){
        		rooms[i]=vr.getContainedRooms()[i];
        		tsens[i]=vr.getContainedSensors()[i];
-       		sp[i]=vr.getContainedSetpoints()[i];
-       		spAverage+=vr.getContainedSetpoints()[i]; //Collect all setpoints and add them together to get the average
-       		weight[i] = (vr.getContainedCubic()[i]/air);
-       		cubic[i] = (vr.getContainedCubic()[i]);
-       		temps[i] = (vr.getContainedTemps()[i]);
+       		sp[i]=vr.getContainedSetpoints()[i]; 	
        	}
-       	
+       	air+=vr.getContainedAir();
        	for(int i=0; i<(vr2.getContainedRooms().length);i++){
        		rooms[(i+vr.getContainedRooms().length)]=vr2.getContainedRooms()[i];
        		tsens[(i+vr.getContainedRooms().length)]=vr2.getContainedSensors()[i];
        		sp[(i+vr.getContainedRooms().length)]=vr2.getContainedSetpoints()[i];
-       		spAverage+=vr2.getContainedSetpoints()[i]; //Collect all setpoints and add them together to get the average
-			cubic[i+(vr.getContainedRooms().length)] = vr2.getContainedCubic()[i];
-       		weight[i+(vr.getContainedRooms().length)] = vr2.getContainedCubic()[i]/air;
-       		temps[i+(vr.getContainedRooms().length)] = vr2.getContainedTemps()[i];
        	}
        	for(int i=0;i<vr.getContainedActuators().length;i++){
        		a[i]=vr.getContainedActuators()[i];
@@ -158,12 +97,11 @@ double test=0;
        	for(int i=0;i<vr2.getContainedActuators().length;i++){
        		a[(i+vr.getContainedActuators().length)]=vr2.getContainedActuators()[i];
        	}
-       	spAverage=spAverage/rooms.length; //Take the average setpoint, might need to
-       	System.out.println("Average setpoint is " +spAverage);
+       	
+       	air+=vr2.getContainedAir();
        	delete(vr2);
        	delete(vr);
-       	insert(new VirtualRoom(rooms,tsens,a,sp,air,spAverage,weight,cubic,temps));
-	
+       	insert(new VirtualRoom(rooms,tsens,a,sp,air)); 	
 end
 
 rule "door-closed"
@@ -175,20 +113,17 @@ rule "door-closed"
 		r2 : RoomConfig(name != r1.name) from rd.getLinkedSpaces()
 		vr : VirtualRoom( containedRooms contains r1.name, containedRooms contains r2.name )
     then
+       	//System.out.println(""+r1.getName());
        	System.out.println(""+rd.getName()+" in "+r1.getName()+" is closed disconnecting " + r2.getName());
+		//System.out.println("Air area is now: "+(((r1.getFloorArea())*(r1.getRoomHeight()))+(r2.getFloorArea())*(r2.getRoomHeight())));
+       	//System.out.println(""+java.util.Arrays.toString(Rooms)+" "+r1.getName()+" "+r2.getName());
+       	//System.out.println(""+java.util.Arrays.toString(vr2.getContainedRooms()));
        	String[] rooms=new String[(vr.getContainedRooms().length-1)];
        	String[] tsens = new String[(vr.getContainedSensors().length-1)];
        	Double[] sp = new Double[(vr.getContainedSetpoints().length-1)];
-       	Double[] weight = new Double[(vr.getContainedWeight().length-1)];
-       	Double[] cubic = new Double[(vr.getContainedCubic().length-1)];
-       	Double[] temps = new Double[(vr.getContainedTemps().length-1)];
        	String rc = r1.toString();
     	String[] split=rc.split("\"");
     	String[] a = {null,null};
-    	double spAverage=0;
-    	
-double test = 0;    	
-    	
     	int ai = 0;
     	for(int i =0;i<split.length;i++){
     		if(split[i].startsWith("a_htr")){
@@ -201,22 +136,21 @@ double test = 0;
     	a=a2;
     	}
     	double air = (r1.getFloorArea()*r1.getRoomHeight());
-    	double vrAir = vr.getContainedAir();
-       	vrAir -= air;
        	int t=0;
        	for(int i=0; i<vr.getContainedRooms().length;i++){
        		if(vr.getContainedRooms()[i]!=r1.getName()){
        			rooms[i-t]=vr.getContainedRooms()[i];
        			tsens[i-t]=vr.getContainedSensors()[i];
        			sp[i-t]=vr.getContainedSetpoints()[i];
-       			cubic[i-t]=vr.getContainedCubic()[i];
-       			weight[i-t]=vr.getContainedCubic()[i]/vrAir;
-       			temps[i-t]=vr.getContainedTemps()[i];
        		}
        		else{
        			t++;
        		}
-       	}    	
+       	}
+       	
+       	double vrAir = vr.getContainedAir();
+       	vrAir -= air;
+       	
        	t=0;
        	String[] act = new String[(vr.getContainedActuators().length-a.length)];
        	for(int i=0;i<vr.getContainedActuators().length;i++){
@@ -241,13 +175,19 @@ double test = 0;
        		}
        		System.out.println(java.util.Arrays.toString(act));
        	}
-       	
-       	for(int i=0; i<rooms.length;i++){
-       		spAverage+=vr.getContainedSetpoints()[i]; //Collect all setpoints and add them together to get the average
-       	}
-       	spAverage=spAverage/rooms.length;
-       	System.out.println("Average setpoint: "+spAverage);
-       	
-       	insert(new VirtualRoom(rooms,tsens,act,sp,vrAir,spAverage,weight,cubic,temps));
+       	insert(new VirtualRoom(rooms,tsens,act,sp,vrAir));
        	delete(vr);
+end
+
+rule "turn-on"
+    when
+		vr : VirtualRoom()
+    then
+    	System.out.println("found VirtualRoom: "+vr);       	
+end
+rule "turn-off"
+    when
+		vr : VirtualRoom()
+    then
+    	System.out.println("found VirtualRoom: "+vr);       	
 end
